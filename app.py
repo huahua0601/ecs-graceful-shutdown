@@ -4,6 +4,7 @@ import signal
 import sys
 import time
 import threading
+import socket
 
 class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -11,7 +12,12 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         self.send_header('Content-type', 'text/html')
         self.end_headers()
         current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        response = f'Hello World - {current_time}'
+        
+        # 获取服务器的 IP 地址
+        hostname = socket.gethostname()
+        ip_address = socket.gethostbyname(hostname)
+        
+        response = f'Hello World - {current_time} - Server IP: {ip_address}'
         self.wfile.write(response.encode('utf-8'))
 
 def run(server_class=HTTPServer, handler_class=SimpleHTTPRequestHandler, port=8000):
@@ -20,9 +26,9 @@ def run(server_class=HTTPServer, handler_class=SimpleHTTPRequestHandler, port=80
     print(f'启动服务器在端口 {port}...')
     
     def delayed_shutdown():
-        print('等待 10 秒后关闭服务器...')
-        time.sleep(10)
-        print('10 秒已过，正在关闭服务器...')
+        print('等待 20 秒后关闭服务器...')
+        time.sleep(20)
+        print('20 秒已过，正在关闭服务器...')
         httpd.shutdown()  # 安全地停止服务器
         httpd.server_close()
         sys.exit(0)
